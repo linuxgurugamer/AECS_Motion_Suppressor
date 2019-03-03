@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+//using System.Threading.Tasks;
 using UnityEngine;
 
-namespace ControlSurfaceToggle {
+namespace AECS_Motion_Suppressor {
 
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     class CSToggleController : MonoBehaviour{

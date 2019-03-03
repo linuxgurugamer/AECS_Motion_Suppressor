@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
+//using System.Threading.Tasks;
 using UnityEngine;
 
-namespace ControlSurfaceToggle
+namespace AECS_Motion_Suppressor
 {
     public class ModuleCSToggle : PartModule
     {
@@ -21,20 +21,35 @@ namespace ControlSurfaceToggle
 
 
 		public ModuleControlSurface cs;
+        public bool isModuleAeroSurface = false;
+
+        [KSPField(isPersistant = true, guiActive = false, guiActiveEditor = false)]
+        float ctrlSurfaceRange;
 
         bool setupCalled = false;
         static List<ModuleCSToggle> toggles;
 
         List<BaseField> csFields;
-
-        static String debugTag = "[CSToggle] ";   
+   
 
         public void setup() {
 
-			//Set up atmoshpere change listener
-			
+            //Set up atmoshpere change listener
+
             //Debug.Log("setup called");
-            cs = GetComponent<ModuleControlSurface>(); //get the parts control surface module
+            cs = GetComponent<ModuleAeroSurface>() as ModuleControlSurface;
+            if (cs != null)
+            {
+                isModuleAeroSurface = true;
+            }
+            else
+            {
+                cs = GetComponent<ModuleControlSurface>(); //get the parts control surface module
+            }
+            if (cs == null)
+                return;
+            if (cs.ctrlSurfaceRange != 0)
+                ctrlSurfaceRange = cs.ctrlSurfaceRange;
 
             if (toggles == null) { //if necessary, initialize static list
                 toggles = new List<ModuleCSToggle>();
@@ -185,6 +200,9 @@ namespace ControlSurfaceToggle
             setEventVisibility();
 
 			cs.authorityLimiter = authority;
+            if (isModuleAeroSurface)
+                cs.ctrlSurfaceRange = ctrlSurfaceRange;
+
             for (int i = 0; i < csFields.Count; i++) { //Reactivate disabled fields
                 csFields[i].guiActive = true;
             } 
@@ -200,7 +218,13 @@ namespace ControlSurfaceToggle
                 authority = cs.authorityLimiter;
             }
             cs.authorityLimiter = 0;
+            if (isModuleAeroSurface)
+            {
+                if (cs.ctrlSurfaceRange != 0)
+                    ctrlSurfaceRange = cs.ctrlSurfaceRange;
 
+                cs.ctrlSurfaceRange = 0;
+            }
 
 			for (int i = 0; i < cs.Fields.Count; i++) { // Save which fields have been disabled, so the correct one's will be enabled
 				if (cs.Fields[i].guiActive) {
