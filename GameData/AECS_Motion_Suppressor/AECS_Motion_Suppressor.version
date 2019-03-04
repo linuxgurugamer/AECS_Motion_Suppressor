@@ -1,16 +1,11 @@
 {
-  "NAME": "ControlSurfaceToggle",
-  "URL": "http://ksp.spacetux.net/avc/ControlSurfaceToggle",
+  "NAME": "AECS_Motion_Suppressor",
+  "URL": "http://ksp.spacetux.net/avc/AECS_Motion_Suppressor",
   "VERSION": {
     "MAJOR": 1,
     "MINOR": 3,
     "PATCH": 0,
     "BUILD": 0
-  },
-  "KSP_VERSION": {
-    "MAJOR": 1,
-    "MINOR": 4,
-    "PATCH": 2
   },
   "KSP_VERSION_MIN": {
     "MAJOR": 1,

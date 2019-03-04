@@ -46,8 +46,8 @@ namespace AECS_Motion_Suppressor
         [KSPField(isPersistant = true, guiName = "Engine Thrust", guiActive = true, guiActiveEditor = true)]
         float engineFlow;
 
-        ModuleEngines engineModule;
-        ModuleEnginesFX engineFxModule;
+        List<ModuleEngines> engineModuleList;
+        List<ModuleEnginesFX>  engineFxModuleList;
         ModuleGimbal gimbalModule;
 
         
@@ -55,8 +55,10 @@ namespace AECS_Motion_Suppressor
         public void setup()
         {
             gimbalModule = part.FindModuleImplementing<ModuleGimbal>();
-            engineModule = part.FindModuleImplementing<ModuleEngines>();
-            engineFxModule = part.FindModuleImplementing<ModuleEnginesFX>();
+
+            engineModuleList = part.FindModulesImplementing<ModuleEngines>().ToList() ;
+
+            engineFxModuleList = part.FindModulesImplementing<ModuleEnginesFX>().ToList();
 
             if (toggles == null)
             { //if necessary, initialize static list
@@ -89,10 +91,22 @@ namespace AECS_Motion_Suppressor
 
                 if (meg != null)
                 {
-                    if (meg.engineModule != null)
-                        meg.engineFlow = meg.engineModule.fuelFlowGui;
-                    if (meg.engineFxModule != null)
-                        meg.engineFlow = meg.engineFxModule.fuelFlowGui;
+                    meg.engineFlow = 0;
+
+                    if (meg.engineModuleList != null)
+                    {
+                        for (int j = meg.engineModuleList.Count - 1; j >= 0; j--)
+                        {
+                            meg.engineFlow = Math.Max(meg.engineFlow, meg.engineModuleList[j].fuelFlowGui);
+                        }
+                    }
+                    if (meg.engineFxModuleList != null)
+                    {
+                        for (int j = meg.engineFxModuleList.Count - 1; j >= 0; j--)
+                        {
+                            meg.engineFlow = Math.Max(meg.engineFlow, meg.engineFxModuleList[j].fuelFlowGui);
+                        }
+                    }
                     meg.setGimbal(meg.engineFlow > 0.000001f);
                 }
             }
