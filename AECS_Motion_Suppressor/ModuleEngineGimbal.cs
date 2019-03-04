@@ -23,7 +23,7 @@ namespace AECS_Motion_Suppressor
         {
             while (true)
             {
-                yield return new WaitForSeconds(0.2f);
+                yield return new WaitForSeconds(0.25f);
 
                 if (FlightInputHandler.state.mainThrottle == 0)
                 {

@@ -9,6 +9,26 @@ namespace AECS_Motion_Suppressor
 {
     public class ModuleCSToggle : PartModule
     {
+        [KSPAction("Toggle All")]
+        public void toggleControlSurfaces(KSPActionParam param)
+        {
+            if (controlActive)
+                disableGlobal(true);
+            else
+                enableGlobal(true);
+        }
+
+        [KSPAction("Disable All")]
+        public void disableControlSurfaces(KSPActionParam param)
+        {
+            disableGlobal(true);
+        }
+
+        [KSPAction("Enable All")]
+        public void enableControlSurfaces(KSPActionParam param)
+        {
+            enableGlobal(true);
+        }
 
         [KSPField(isPersistant = true, guiActive = false, guiActiveEditor = false)]
         bool controlActive = true;
