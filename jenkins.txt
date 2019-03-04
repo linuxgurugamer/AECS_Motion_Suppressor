@@ -35,7 +35,7 @@
 # 3:SOURCEFILE, DESTDIR
 3:AECS_Motion_Suppressor.version,GameData/AECS_Motion_Suppressor
 3:LICENSE.md,GameData/AECS_Motion_Suppressor
-3:Readme.md,GameData/AECS_Motion_Suppressor
+3:ReadMe.md,GameData/AECS_Motion_Suppressor
 
 # 4:SOURCDIR, DESTDIR
 #4:Textures,GameData/ManeuverQueue/Textures
