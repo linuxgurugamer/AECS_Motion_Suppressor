@@ -4,3 +4,11 @@
 	Added control of AirBrakes
 	Added events to disable and enable all control surfaces
 	Added actions to disable and enable all control surfaces
+
+1.3.1
+	Added code to detect changes in vessel and update accordingly
+	Added code to detect vessel changes
+	REmoved check for mainThrottle == 0 (needed to allow MechJeb to work properly)
+	added events and actions to allow all gimbals to be enabled, disabled, and reset
+	Changed check from 5x a second to 4x a second
+	Changed the OnStart to Start in ModuleEngineGimbal
