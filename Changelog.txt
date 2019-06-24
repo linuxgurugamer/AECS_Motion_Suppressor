@@ -12,3 +12,6 @@
 	added events and actions to allow all gimbals to be enabled, disabled, and reset
 	Changed check from 5x a second to 4x a second
 	Changed the OnStart to Start in ModuleEngineGimbal
+
+1.3.1.1
+	Version bump for 1.7.2
