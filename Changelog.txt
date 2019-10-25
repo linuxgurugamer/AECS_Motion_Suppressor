@@ -1,3 +1,4 @@
+
 1.3.0
 	Added control of engine gimbaling
 		Checks for multi-mode engines
@@ -19,3 +20,6 @@
 1.3.2
 	Added InstallChecker
 	Rebuild for 1.8
+
+1.3.2.1
+	Updated MiniAVC.dll to 1.4.0
