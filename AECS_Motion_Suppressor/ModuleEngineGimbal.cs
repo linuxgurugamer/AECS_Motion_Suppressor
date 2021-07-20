@@ -15,7 +15,6 @@ namespace AECS_Motion_Suppressor
     {
         void Start()
         {
-            //Debug.Log("EngineGimbalController.Start");
             GameEvents.onVesselPartCountChanged.Add(OnVesselPartCountChanged);
             GameEvents.onVesselChange.Add(OnVesselChange);
             GameEvents.onVesselGoOffRails.Add(OnVesselGoOffRails);
@@ -259,9 +258,24 @@ namespace AECS_Motion_Suppressor
             }
         }
 
-        void setGimbal(bool b)
+        void setGimbal(bool active)
         {
-            gimbalModule.gimbalLock = !b;
+            if (!active)
+            {
+                StartCoroutine(DoDelayedGimbalLock());
+            }
+            else
+            {
+                StopCoroutine(DoDelayedGimbalLock());
+                gimbalModule.gimbalLock = !active;
+                activeFlag = !gimbalModule.gimbalLock;
+            }
+        }
+
+        IEnumerator DoDelayedGimbalLock()
+        {
+            yield return new WaitForSeconds(5f);
+            gimbalModule.gimbalLock = true;
             activeFlag = !gimbalModule.gimbalLock;
         }
 
