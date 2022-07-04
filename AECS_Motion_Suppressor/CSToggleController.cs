@@ -28,9 +28,8 @@ namespace AECS_Motion_Suppressor {
 
 		public void UpdateCurrentAtmosphereState(GameEvents.HostedFromToAction<Vessel, Vessel.Situations> data) {
 
-			if (FlightGlobals.ActiveVessel == null) {
+			if (FlightGlobals.ActiveVessel == null) 
                 return;
-            }
 
             bool inAtmo = FlightGlobals.ActiveVessel.atmDensity != 0;
 

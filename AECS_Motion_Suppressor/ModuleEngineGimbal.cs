@@ -6,10 +6,11 @@ using System.Text;
 //using System.Threading.Tasks;
 using UnityEngine;
 
+using static AECS_Motion_Suppressor.AECS_VesselModule;
 
 namespace AECS_Motion_Suppressor
 {
-
+#if false
     [KSPAddon(KSPAddon.Startup.Flight, false)]
     public class EngineGimbalController : MonoBehaviour
     {
@@ -18,8 +19,10 @@ namespace AECS_Motion_Suppressor
             GameEvents.onVesselPartCountChanged.Add(OnVesselPartCountChanged);
             GameEvents.onVesselChange.Add(OnVesselChange);
             GameEvents.onVesselGoOffRails.Add(OnVesselGoOffRails);
+
             StartCoroutine(SlowUpdate());
         }
+
 
         public void Destroy()
         {
@@ -27,6 +30,7 @@ namespace AECS_Motion_Suppressor
             GameEvents.onVesselChange.Remove(OnVesselChange);
             GameEvents.onVesselGoOffRails.Remove(OnVesselGoOffRails);
         }
+
 
         void RebuildToggle(Vessel v)
         {
@@ -73,6 +77,7 @@ namespace AECS_Motion_Suppressor
             }
         }
     }
+#endif
 
     public class ModuleEngineGimbal : PartModule
     {
@@ -89,17 +94,20 @@ namespace AECS_Motion_Suppressor
         [KSPAction("Disable All")]
         public void disableControlSurfaces(KSPActionParam param)
         {
-            ModuleEngineGimbal.DisableGlobal(false);
+            DisableGlobal(false);
             globalStatus = GlobalStatus.disabled;
         }
 
         [KSPAction("Enable All")]
         public void enableControlSurfaces(KSPActionParam param)
         {
-            if (toggles == null)
-                Start();
+            if (vesselModule.toggles == null)
+            {
+                Log.Info("ModuleEngineGimbal.enableControlSurfaces, vesselModule.toggles is null");
+            }
+            //Start();
 
-            ModuleEngineGimbal.EnableGlobal();
+            EnableGlobal();
             globalStatus = GlobalStatus.enabled;
         }
 
@@ -111,50 +119,56 @@ namespace AECS_Motion_Suppressor
         [KSPEvent(guiActive = true, guiActiveEditor = false, guiName = "Activate All")]
         public void EventEnableAll()
         {
-            if (toggles == null)
+            if (vesselModule.toggles == null)
             {
-                Debug.Log("ERROR: ModuleEngineGimbal.EventEnableAll, toggles is null");
+                Log.Info("ERROR: ModuleEngineGimbal.EventEnableAll, tvesselModule.togglesoggles is null");
                 Start();
             }
-            ModuleEngineGimbal.EnableGlobal();
+            EnableGlobal();
             globalStatus = GlobalStatus.enabled;
         }
 
         [KSPEvent(guiActive = true, guiActiveEditor = false, guiName = "Deactivate All")]
         public void EventDisableAll()
         {
-            if (toggles == null)
+            if (vesselModule.toggles == null)
             {
-                Debug.Log("ERROR: ModuleEngineGimbal.EventDisableAll, toggles is null");
+                Log.Info("ERROR: ModuleEngineGimbal.EventDisableAll, vesselModule.toggles is null");
                 Start();
             }
 
-            ModuleEngineGimbal.DisableGlobal(false);
+            DisableGlobal(false);
             globalStatus = GlobalStatus.disabled;
         }
 
         internal bool activeFlag;
         internal bool setupCalled = false;
 
-        internal static List<ModuleEngineGimbal> toggles;
+        //internal static List<ModuleEngineGimbal> toggles;
 
         [KSPField(isPersistant = true, guiName = "Engine Thrust", guiActive = true, guiActiveEditor = true)]
-        float engineFlow;
+        internal float engineFlow;
 
-        List<ModuleEngines> engineModuleList;
-        List<ModuleEnginesFX>  engineFxModuleList;
+        internal List<ModuleEngines> engineModuleList;
+        internal List<ModuleEnginesFX> engineFxModuleList;
         ModuleGimbal gimbalModule;
 
 
+        AECS_VesselModule vesselModule;
 
         internal void Start()
         {
+            if (!HighLogic.LoadedSceneIsFlight)
+                return;
             gimbalModule = part.FindModuleImplementing<ModuleGimbal>();
 
-            engineModuleList = part.FindModulesImplementing<ModuleEngines>().ToList() ;
+            engineModuleList = part.FindModulesImplementing<ModuleEngines>().ToList();
 
             engineFxModuleList = part.FindModulesImplementing<ModuleEnginesFX>().ToList();
 
+            vesselModule = vessel.FindVesselModuleImplementing<AECS_VesselModule>();
+
+#if false
             if (toggles == null)
             { //if necessary, initialize static list
                 toggles = new List<ModuleEngineGimbal>();
@@ -162,19 +176,51 @@ namespace AECS_Motion_Suppressor
 
             toggles.Add(this);
             removeNullToggles(); // Clean up elements from previous iterations of the list
+#endif
 
             setupCalled = true;
             activeFlag = !gimbalModule.gimbalLock;
-        }                       
 
-        public static void checkAllFuelFlow()
+#if false
+           GameEvents.onEngineThrustPercentageChanged.Add(onEngineThrustPercentageChanged);
+            GameEvents.onEngineActiveChange.Add(onEngineActiveChange);
+            GameEvents.onMultiModeEngineSwitchActive.Add(onMultiModeEngineSwitchActive);
+#endif
+        }
+
+        public void Destroy()
         {
-            if (toggles == null)
+#if false
+            GameEvents.onEngineThrustPercentageChanged.Remove(onEngineThrustPercentageChanged);
+            GameEvents.onEngineActiveChange.Remove(onEngineActiveChange);
+            GameEvents.onMultiModeEngineSwitchActive.Remove(onMultiModeEngineSwitchActive);
+#endif
+        }
+
+#if false
+        void onEngineThrustPercentageChanged(ModuleEngines me)
+        {
+            checkAllFuelFlow();
+        }
+
+        void onEngineActiveChange(ModuleEngines me)
+        {
+            checkAllFuelFlow();
+        }
+
+        void onMultiModeEngineSwitchActive(MultiModeEngine mme)
+        {
+            checkAllFuelFlow();
+        }
+#endif
+        public void checkAllFuelFlow()
+        {
+            if (vesselModule.toggles == null)
                 return;
 
-            for (int i = toggles.Count - 1; i >= 0; i--)
+            for (int i = vesselModule.toggles.Count - 1; i >= 0; i--)
             {
-                ModuleEngineGimbal meg = toggles[i];
+                ModuleEngineGimbal meg = vesselModule.toggles[i];
 
                 if (meg != null)
                 {
@@ -199,17 +245,20 @@ namespace AECS_Motion_Suppressor
             }
         }
 
-        public static void enableGlobal(bool printMessage)
+        public void enableGlobal(bool printMessage)
         {
-            if (toggles == null) //List not initialized because we don't have any engines, and haven't launched a vessel with engines
+            if (vesselModule.toggles == null) //List not initialized because we don't have any engines, and haven't launched a vessel with engines
                 return;
 
             if (printMessage)
-                ScreenMessages.PostScreenMessage("Enabled all Engine Gimbaling");
-
-            for (int i = toggles.Count - 1; i >= 0; i--)
             {
-                ModuleEngineGimbal meg = toggles[i];
+                ScreenMessages.PostScreenMessage("Enabled all Engine Gimbaling");
+                Log.Info("enableGlobal, Enabled all Engine Gimbaling");
+            }
+
+            for (int i = vesselModule.toggles.Count - 1; i >= 0; i--)
+            {
+                ModuleEngineGimbal meg = vesselModule.toggles[i];
                 if (meg != null)
                 {
                     meg.setGimbal(true);
@@ -217,21 +266,23 @@ namespace AECS_Motion_Suppressor
             }
         }
 
-        public static void DisableGlobal(bool printMessage)
+        public void DisableGlobal(bool printMessage)
         {
-            if (toggles == null)
+            if (vesselModule.toggles == null)
             {
-                Debug.Log("ERROR: ModuleEngineGimbal.disableGlobal, toggles is null");
+                Log.Info("ERROR: ModuleEngineGimbal.disableGlobal, vesselModule.toggles is null");
                 return;
             }
 
             if (printMessage)
-                ScreenMessages.PostScreenMessage("Disabled all Engine Gimbaling");
-
-            for (int i = toggles.Count - 1; i >= 0; i--)
             {
-                ModuleEngineGimbal meg = toggles[i];
-            
+                ScreenMessages.PostScreenMessage("Disabled all Engine Gimbaling");
+                Log.Info("DisableGlobal, Disabled all Engine Gimbaling");
+            }
+            for (int i = vesselModule.toggles.Count - 1; i >= 0; i--)
+            {
+                ModuleEngineGimbal meg = vesselModule.toggles[i];
+
                 if (meg != null && meg.activeFlag)
                 {
                     meg.setGimbal(false);
@@ -239,17 +290,17 @@ namespace AECS_Motion_Suppressor
             }
         }
 
-        public static void EnableGlobal()
+        public void EnableGlobal()
         {
-            //Debug.Log("Enableglobal");
-            if (toggles == null)
+            Log.Info("Enableglobal");
+            if (vesselModule.toggles == null)
             {
-                Debug.Log("ERROR: ModuleEngineGimbal.EnableGlobal toggles is null");
+                Log.Info("ERROR: ModuleEngineGimbal.EnableGlobal vesselModule.toggles is null");
                 return;
             };
-            for (int i = toggles.Count - 1; i >= 0; i--)
+            for (int i = vesselModule.toggles.Count - 1; i >= 0; i--)
             {
-                ModuleEngineGimbal meg = toggles[i];
+                ModuleEngineGimbal meg = vesselModule.toggles[i];
 
                 if (meg != null && !meg.activeFlag)
                 {
@@ -258,27 +309,47 @@ namespace AECS_Motion_Suppressor
             }
         }
 
-        void setGimbal(bool active)
+        internal void setGimbal(bool active)
         {
             if (!active)
             {
-                StartCoroutine(DoDelayedGimbalLock());
+                if (!delayedGimbalLockActive && !gimbalModule.gimbalLock)
+                {
+                    Log.Info("setGimbal: false, part: " + this.part.partInfo.title);
+                    StartCoroutine(DoDelayedGimbalLock());
+                }
             }
             else
             {
-                StopCoroutine(DoDelayedGimbalLock());
-                gimbalModule.gimbalLock = !active;
-                activeFlag = !gimbalModule.gimbalLock;
+                if (gimbalModule.gimbalLock)
+                {
+                    Log.Info("setGimbal: true, part: " + this.part.partInfo.title);
+                    if (delayedGimbalLockActive)
+                    {
+                        Log.Info("setGimbal: Stopping delayedGimbalLock, part: " + this.part.partInfo.title);
+                        StopCoroutine(DoDelayedGimbalLock());
+                    }
+                    gimbalModule.gimbalLock = !active;
+                    activeFlag = !gimbalModule.gimbalLock;
+                    delayedGimbalLockActive = false;
+                }
             }
         }
 
+        bool delayedGimbalLockActive = false;
         IEnumerator DoDelayedGimbalLock()
         {
+            delayedGimbalLockActive = true;
+
             yield return new WaitForSeconds(5f);
+            Log.Info("DoDelayedGimbalLock, setting gimbalLock true for: " + part.partInfo.title);
             gimbalModule.gimbalLock = true;
             activeFlag = !gimbalModule.gimbalLock;
+
+            delayedGimbalLockActive = false;
         }
 
+#if false
         static void removeNullToggles()
         {
             if (toggles == null) //Should technically never occur
@@ -292,5 +363,7 @@ namespace AECS_Motion_Suppressor
                 }
             }
         }
+#endif
+
     }
 }

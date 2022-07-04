@@ -39,9 +39,13 @@
     <Reference Include="$(KSPDIR)\KSP_x64_Data\Managed\UnityEngine*.dll">
       <Private>False</Private>
     </Reference>
+    <Reference Include="KSP_Log">
+      <HintPath>R:\KSP_1.12.3_dev\GameData\SpaceTuxLibrary\Plugins\KSP_Log.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AECS_VesselModule.cs" />
     <Compile Include="AssemblyVersion.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
