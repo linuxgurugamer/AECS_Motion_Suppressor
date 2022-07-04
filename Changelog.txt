@@ -49,3 +49,5 @@
 	Eliminated the now unnecessary EngineGimbalController
 	Now only touches engines on the active vessel
 	Only loads defaults one time, not every time the Flight scene is loaded
+	NEW DEPENDENCY:
+		SpaceTuxLibrary
