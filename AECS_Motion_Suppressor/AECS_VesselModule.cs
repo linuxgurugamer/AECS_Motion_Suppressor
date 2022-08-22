@@ -49,7 +49,7 @@ namespace AECS_Motion_Suppressor
 
             }
         }
-        public void Destroy()
+        public void OnDestroy()
         {
             GameEvents.onVesselPartCountChanged.Remove(OnVesselPartCountChanged);
             GameEvents.onVesselChange.Remove(OnVesselChange);
