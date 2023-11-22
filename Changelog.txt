@@ -54,3 +54,6 @@
 
 1.3.3.2 
 	Fixed releasing gameevents used by the vesselmodule
+
+1.3.3.3
+	Added code to check for up to 3 ModuleControlSurface modules in a part (at least one part has two of them)
