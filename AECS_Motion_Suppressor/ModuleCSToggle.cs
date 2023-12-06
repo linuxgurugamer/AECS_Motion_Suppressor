@@ -48,9 +48,9 @@ namespace AECS_Motion_Suppressor
 
         void SetAuthorityList(int x, float value)
         {
-            if (x == 0)  authority1 = value;
-            if (x == 1)  authority2 = value;
-            if (x == 2)  authority3 = value;
+            if (x == 0) authority1 = value;
+            if (x == 1) authority2 = value;
+            if (x == 2) authority3 = value;
         }
 
         [KSPField(isPersistant = true, guiActive = false, guiActiveEditor = false)]
@@ -78,27 +78,31 @@ namespace AECS_Motion_Suppressor
         float GetCtrlSurfaceRangeList(int x)
         {
             float rc = 0;
+            if (x == 0) rc = ctrlSurfaceRange0;
             if (x == 1) rc = ctrlSurfaceRange1;
             if (x == 2) rc = ctrlSurfaceRange2;
-            if (x == 3) rc = ctrlSurfaceRange3;
+
+            Log.Info("GetCtrlSurfaceRangeList, x: " + x + ", rc: " + rc);
+
             return rc;
         }
 
         void SetCtrlSurfaceRangeList(int x, float value)
         {
+            Log.Info("SetCtrlSurfaceRangeList, part: " + part.name + ", x: " + x + ", value: " + value);
+            if (x == 0) ctrlSurfaceRange0 = value;
             if (x == 1) ctrlSurfaceRange1 = value;
             if (x == 2) ctrlSurfaceRange2 = value;
-            if (x == 3) ctrlSurfaceRange3 = value;
         }
+
+        [KSPField(isPersistant = true, guiActive = false, guiActiveEditor = false)]
+        float ctrlSurfaceRange0;
 
         [KSPField(isPersistant = true, guiActive = false, guiActiveEditor = false)]
         float ctrlSurfaceRange1;
 
         [KSPField(isPersistant = true, guiActive = false, guiActiveEditor = false)]
         float ctrlSurfaceRange2;
-
-        [KSPField(isPersistant = true, guiActive = false, guiActiveEditor = false)]
-        float ctrlSurfaceRange3;
 
 
         bool setupCalled = false;
@@ -110,13 +114,14 @@ namespace AECS_Motion_Suppressor
         public void setup()
         {
 
-            //Set up atmoshpere change listener
+            //Set up atmosphere change listener
 
             //Debug.Log("setup called");
             cs = GetComponent<ModuleAeroSurface>() as ModuleControlSurface;
-                csList = new List<ModuleControlSurface> ();
+            csList = new List<ModuleControlSurface>();
             if (cs != null)
             {
+                Log.Info("setup, ModuleAeroSurface found: " +part.name);
                 isModuleAeroSurface = true;
                 csList.Add(cs);
             }
@@ -127,7 +132,7 @@ namespace AECS_Motion_Suppressor
             }
             if (cs == null)
                 return;
-                
+
             //if (cs.ctrlSurfaceRange != 0)
             //    ctrlSurfaceRange = cs.ctrlSurfaceRange;
 
@@ -149,9 +154,9 @@ namespace AECS_Motion_Suppressor
 
             for (var i = 0; i < csList.Count; i++)
             {
-                if (csList[i].ctrlSurfaceRange != 0)
+                    if (csList[i].ctrlSurfaceRange != 0)
                     SetCtrlSurfaceRangeList(i, csList[i].ctrlSurfaceRange);
-                    
+
                 if (csList[i].authorityLimiter != 0)
                 { //We don't want to override authority if the surface is disabled
                     SetAuthorityList(i, csList[i].authorityLimiter);
@@ -318,7 +323,7 @@ namespace AECS_Motion_Suppressor
 
         public void enableCS()
         {
-            //Debug.Log("enabled " + part.name);
+            Log.Info("enableCS " + part.name + ", isModuleAeroSurface: " + isModuleAeroSurface);
             controlActive = true;
             setEventVisibility();
 
@@ -342,7 +347,7 @@ namespace AECS_Motion_Suppressor
 
         public void disableCS()
         {
-            //Debug.Log("disabled "+part.name);
+            Log.Info("disableCS " + part.name + ", isModuleAeroSurface: " + isModuleAeroSurface);
 
             controlActive = false;
             setEventVisibility();
@@ -364,7 +369,7 @@ namespace AECS_Motion_Suppressor
             {
                 if (csList[i].authorityLimiter != 0)
                 { //avoid overwriting value if already disabled
-                    SetAuthorityList(i, csList[i].authorityLimiter);                    
+                    SetAuthorityList(i, csList[i].authorityLimiter);
                 }
                 csList[i].authorityLimiter = 0;
                 if (isModuleAeroSurface)
