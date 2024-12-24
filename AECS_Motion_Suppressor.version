@@ -1,11 +1,11 @@
 {
   "NAME": "AECS_Motion_Suppressor",
-  "URL": "http://ksp.spacetux.net/avc/AECS_Motion_Suppressor",
+  "URL": "https://raw.githubusercontent.com/linuxgurugamer/AECS_Motion_Suppressor/refs/heads/master/AECS_Motion_Suppressor.version",
   "VERSION": {
     "MAJOR": 1,
     "MINOR": 3,
     "PATCH": 3,
-    "BUILD": 4
+    "BUILD": 5
   },
   "KSP_VERSION": {
     "MAJOR": 1,
@@ -16,5 +16,10 @@
     "MAJOR": 1,
     "MINOR": 8,
     "PATCH": 0
+  },
+  "KSP_VERSION_MAX": {
+    "MAJOR": 1,
+    "MINOR": 12,
+    "PATCH": 99
   }
 }
